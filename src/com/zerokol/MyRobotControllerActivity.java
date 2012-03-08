@@ -1,8 +1,8 @@
 package com.zerokol;
 
-import com.zerokol.joystick.views.Joystick;
-import com.zerokol.joystick.views.Joystick.OnJoystickMoveListener;
 
+import com.zerokol.joystick.Joystick;
+import com.zerokol.joystick.Joystick.OnJoystickMoveListener;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -27,8 +27,8 @@ public class MyRobotControllerActivity extends Activity {
 			@Override
 			public void onValueChanged(int angle, int power) {
 				// TODO Auto-generated method stub
-				angleTextView.setText(" "+String.valueOf(angle)+"°");
-				powerTextView.setText(" "+String.valueOf(power)+"%");
+				angleTextView.setText(" " + String.valueOf(angle) + "°");
+				powerTextView.setText(" " + String.valueOf(power) + "%");
 
 			}
 		}, Joystick.DEFAULT_LOOP_INTERVAL);
