@@ -1,8 +1,8 @@
 package com.zerokol;
 
 
-import com.zerokol.joystick.Joystick;
-import com.zerokol.joystick.Joystick.OnJoystickMoveListener;
+import com.zerokol.views.JoystickView;
+import com.zerokol.views.JoystickView.OnJoystickMoveListener;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class MyRobotControllerActivity extends Activity {
 	private TextView angleTextView;
 	private TextView powerTextView;
-	private Joystick joystick;
+	private JoystickView joystick;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -20,7 +20,7 @@ public class MyRobotControllerActivity extends Activity {
 
 		angleTextView = (TextView) findViewById(R.id.angleTextView);
 		powerTextView = (TextView) findViewById(R.id.powerTextView);
-		joystick = (Joystick) findViewById(R.id.joystick);
+		joystick = (JoystickView) findViewById(R.id.joystickView);
 
 		joystick.setOnJoystickMoveListener(new OnJoystickMoveListener() {
 
@@ -31,6 +31,6 @@ public class MyRobotControllerActivity extends Activity {
 				powerTextView.setText(" " + String.valueOf(power) + "%");
 
 			}
-		}, Joystick.DEFAULT_LOOP_INTERVAL);
+		}, JoystickView.DEFAULT_LOOP_INTERVAL);
 	}
 }
