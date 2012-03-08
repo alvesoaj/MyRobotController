@@ -25,7 +25,8 @@ public class Joystick extends View implements Runnable {
 	private Paint mainCircle;
 	private Paint secondaryCircle;
 	private Paint button;
-	private Paint frontText;
+	private Paint horizontalLine;
+	private Paint verticalLine;
 	private int joystickRadius;
 	private int buttonRadius;
 
@@ -64,9 +65,15 @@ public class Joystick extends View implements Runnable {
 				r.getColor(R.color.green)));
 		secondaryCircle.setStyle(Paint.Style.STROKE);
 
-		frontText = new Paint();
-		frontText.setTextSize((int) (getWidth() * 0.1));
-		frontText.setColor(tyArr.getColor(
+		verticalLine = new Paint();
+		verticalLine.setStrokeWidth(2);
+		verticalLine.setColor(tyArr.getColor(
+				R.styleable.Joystick_secondaryCircleColor,
+				r.getColor(R.color.red)));
+
+		horizontalLine = new Paint();
+		horizontalLine.setStrokeWidth(5);
+		horizontalLine.setColor(tyArr.getColor(
 				R.styleable.Joystick_secondaryCircleColor,
 				r.getColor(R.color.black)));
 
@@ -127,10 +134,15 @@ public class Joystick extends View implements Runnable {
 		// painting the secondary circle
 		canvas.drawCircle((int) centerX, (int) centerY, joystickRadius / 2,
 				secondaryCircle);
-		// paint front text
-		canvas.drawText("|", (int) centerX - frontText.measureText("|")/2,
-				(int) (centerY - joystickRadius + frontText.getTextSize()),
-				frontText);
+		// paint lines
+		canvas.drawLine((float) centerX, (float) centerY, (float) centerX,
+				(float) (centerY - joystickRadius), verticalLine);
+		canvas.drawLine((float) (centerX - joystickRadius), (float) centerY,
+				(float) (centerX + joystickRadius), (float) centerY,
+				horizontalLine);
+		canvas.drawLine((float) centerX, (float) (centerY + joystickRadius),
+				(float) centerX, (float) centerY, horizontalLine);
+
 		// painting the move button
 		canvas.drawCircle(xPosition, yPosition, buttonRadius, button);
 	}
