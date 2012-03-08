@@ -6,7 +6,6 @@
         <attr name="secondaryCircleColor" format="color" />
         <attr name="buttonColor" format="color" />
         <attr name="textColor" format="color" />
-        <attr name="buttonRadius" format="integer" />
     </declare-styleable>
 
 </resources>

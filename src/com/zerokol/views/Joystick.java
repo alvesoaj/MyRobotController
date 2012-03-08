@@ -64,10 +64,8 @@ public class Joystick extends View implements Runnable {
 				r.getColor(R.color.green)));
 		secondaryCircle.setStyle(Paint.Style.STROKE);
 
-		buttonRadius = tyArr.getInteger(R.styleable.Joystick_buttonRadius, 30);
-
 		frontText = new Paint();
-		frontText.setTextSize((int)(getWidth() * 0.1));
+		frontText.setTextSize((int) (getWidth() * 0.1));
 		frontText.setColor(tyArr.getColor(
 				R.styleable.Joystick_secondaryCircleColor,
 				r.getColor(R.color.black)));
@@ -94,9 +92,9 @@ public class Joystick extends View implements Runnable {
 		// before measure, get the center of view
 		xPosition = (int) getWidth() / 2;
 		yPosition = (int) getWidth() / 2;
-		
-		buttonRadius = (int) (d/2 * 0.25);
-		joystickRadius = (int) (d/2 * 0.75);
+
+		buttonRadius = (int) (d / 2 * 0.25);
+		joystickRadius = (int) (d / 2 * 0.75);
 	}
 
 	private int measure(int measureSpec) {
@@ -130,7 +128,7 @@ public class Joystick extends View implements Runnable {
 		canvas.drawCircle((int) centerX, (int) centerY, joystickRadius / 2,
 				secondaryCircle);
 		// paint front text
-		canvas.drawText("|", (int) centerX,
+		canvas.drawText("|", (int) centerX - frontText.measureText("|")/2,
 				(int) (centerY - joystickRadius + frontText.getTextSize()),
 				frontText);
 		// painting the move button
