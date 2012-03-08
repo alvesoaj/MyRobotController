@@ -1,5 +1,5 @@
 ## My Robot Controller - Android
-The main aim for this project is control a Arduino two wells robot from a smart-phone with Android by bluetooth.
+The main aim for this project is control a Arduino two wheels robot from a smart-phone with Android by bluetooth.
 ### Activities
 ### Views
 * Joystick

@@ -2,9 +2,9 @@ package com.zerokol.views;
 
 import com.zerokol.R;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -22,11 +22,12 @@ public class Joystick extends View implements Runnable {
 	private int yPosition = 0; // Touch y position
 	private double centerX = 0; // Center view x position
 	private double centerY = 0; // Center view y position
-	private int padding = 10;
-	private int circleColor;
-	private int buttonColor;
-	private int buttonRadius = 30;
-	private int joystickRadius = 100;
+	private Paint mainCircle;
+	private Paint secondaryCircle;
+	private Paint button;
+	private Paint frontText;
+	private int joystickRadius;
+	private int buttonRadius;
 
 	public Joystick(Context context) {
 		super(context);
@@ -36,10 +37,46 @@ public class Joystick extends View implements Runnable {
 		super(context, attrs);
 		TypedArray a = context.obtainStyledAttributes(attrs,
 				R.styleable.Joystick);
-		circleColor = a.getColor(R.styleable.Joystick_circleColor, Color.RED);
-		buttonColor = a.getColor(R.styleable.Joystick_buttonColor, Color.RED);
-		buttonRadius = a.getInteger(R.styleable.Joystick_buttonRadius, 30);
+		initJoystickView(a);
 		a.recycle();
+	}
+
+	public Joystick(Context context, AttributeSet attrs, int defaultStyle) {
+		super(context, attrs, defaultStyle);
+		TypedArray a = context.obtainStyledAttributes(attrs,
+				R.styleable.Joystick);
+		initJoystickView(a);
+		a.recycle();
+	}
+
+	protected void initJoystickView(TypedArray tyArr) {
+		Resources r = this.getResources();
+
+		mainCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
+		mainCircle
+				.setColor(tyArr.getColor(R.styleable.Joystick_mainCircleColor,
+						r.getColor(R.color.white)));
+		mainCircle.setStyle(Paint.Style.FILL_AND_STROKE);
+
+		secondaryCircle = new Paint();
+		secondaryCircle.setColor(tyArr.getColor(
+				R.styleable.Joystick_secondaryCircleColor,
+				r.getColor(R.color.green)));
+		secondaryCircle.setStyle(Paint.Style.STROKE);
+
+		buttonRadius = tyArr.getInteger(R.styleable.Joystick_buttonRadius, 30);
+
+		frontText = new Paint();
+		frontText.setTextSize(25);
+		frontText.setColor(tyArr.getColor(
+				R.styleable.Joystick_secondaryCircleColor,
+				r.getColor(R.color.black)));
+
+		button = new Paint(Paint.ANTI_ALIAS_FLAG);
+		button.setColor(tyArr.getColor(
+				R.styleable.Joystick_secondaryCircleColor,
+				r.getColor(R.color.red)));
+		button.setStyle(Paint.Style.FILL);
 	}
 
 	@Override
@@ -50,19 +87,34 @@ public class Joystick extends View implements Runnable {
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		// setting the measured values to resize the view to a certain width and
 		// height
-		setMeasuredDimension(measureWidth(widthMeasureSpec),
-				measureHeight(heightMeasureSpec));
+		int d = Math.min(measure(widthMeasureSpec), measure(heightMeasureSpec));
+
+		setMeasuredDimension(d, d);
+
 		// before measure, get the center of view
 		xPosition = (int) getWidth() / 2;
 		yPosition = (int) getWidth() / 2;
+		
+		buttonRadius = (int) (d/2 * 0.25);
+		joystickRadius = (int) (d/2 * 0.75);
 	}
 
-	private int measureWidth(int measureSpec) {
-		return 2 * padding + buttonRadius + 2 * joystickRadius;
-	}
+	private int measure(int measureSpec) {
+		int result = 0;
 
-	private int measureHeight(int measureSpec) {
-		return 2 * padding + buttonRadius + 2 * joystickRadius;
+		// Decode the measurement specifications.
+		int specMode = MeasureSpec.getMode(measureSpec);
+		int specSize = MeasureSpec.getSize(measureSpec);
+
+		if (specMode == MeasureSpec.UNSPECIFIED) {
+			// Return a default size of 200 if no bounds are specified.
+			result = 200;
+		} else {
+			// As you want to fill the available space
+			// always return the full available bounds.
+			result = specSize;
+		}
+		return result;
 	}
 
 	@Override
@@ -71,17 +123,18 @@ public class Joystick extends View implements Runnable {
 		centerX = (getWidth()) / 2;
 		centerY = (getHeight()) / 2;
 
-		Paint p = new Paint();
-		p.setStyle(Paint.Style.STROKE);
-		p.setColor(circleColor);
-		canvas.drawCircle((int) centerX, (int) centerY, joystickRadius, p);
-		// dotted stroke
-		canvas.drawCircle((int) centerX, (int) centerY, joystickRadius / 2, p);
-
-		p.setColor(buttonColor);
-		p.setStyle(Paint.Style.FILL);
-		canvas.drawCircle(xPosition, yPosition, buttonRadius, p);
-		canvas.drawCircle(xPosition, yPosition, buttonRadius / 2, p);
+		// painting the main circle
+		canvas.drawCircle((int) centerX, (int) centerY, joystickRadius,
+				mainCircle);
+		// painting the secondary circle
+		canvas.drawCircle((int) centerX, (int) centerY, joystickRadius / 2,
+				secondaryCircle);
+		// paint front text
+		canvas.drawText("|", (int) centerX,
+				(int) (centerY - joystickRadius + frontText.getTextSize()),
+				frontText);
+		// painting the move button
+		canvas.drawCircle(xPosition, yPosition, buttonRadius, button);
 	}
 
 	@Override
@@ -117,7 +170,8 @@ public class Joystick extends View implements Runnable {
 		if (xPosition > centerX) {
 			if (yPosition < centerY) {
 				return (int) (Math.atan((yPosition - centerY)
-						/ (xPosition - centerX)) * RAD + 90);
+						/ (xPosition - centerX))
+						* RAD + 90);
 			} else if (yPosition > centerY) {
 				return (int) (Math.atan((yPosition - centerY)
 						/ (xPosition - centerX)) * RAD) + 90;
@@ -127,7 +181,8 @@ public class Joystick extends View implements Runnable {
 		} else if (xPosition < centerX) {
 			if (yPosition < centerY) {
 				return (int) (Math.atan((yPosition - centerY)
-						/ (xPosition - centerX)) * RAD - 90);
+						/ (xPosition - centerX))
+						* RAD - 90);
 			} else if (yPosition > centerY) {
 				return (int) (Math.atan((yPosition - centerY)
 						/ (xPosition - centerX)) * RAD) - 90;
