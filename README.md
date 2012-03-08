@@ -4,7 +4,7 @@ The main aim for this project is control a Arduino two wells robot from a smart-
 ### Views
 * Joystick
 
-- Is a custom view that works like a joystick, this view controls two variables, angle motion and power motion of the screen touch.
+Is a custom view that works like a joystick, this view controls two variables, angle motion and power motion of the screen touch.
 
 [![Creative Commons](http://i.creativecommons.org/l/by-sa/3.0/88x31.png)](http://creativecommons.org/licenses/by-sa/3.0/)
 
