@@ -1,8 +1,7 @@
 ## My Robot Controller - Android
 The main aim for this project is control a Arduino two wheels robot from a smart-phone with Android by bluetooth.
+
 ### Activities
-### Views
-* Joystick
 
 Is a custom view that works like a joystick, this view controls two variables, angle motion and power motion of the screen touch.
 

@@ -1,7 +1,7 @@
 package com.zerokol;
 
-import com.zerokol.views.Joystick;
-import com.zerokol.views.Joystick.OnJoystickMoveListener;
+import com.zerokol.joystick.views.Joystick;
+import com.zerokol.joystick.views.Joystick.OnJoystickMoveListener;
 
 import android.app.Activity;
 import android.os.Bundle;
