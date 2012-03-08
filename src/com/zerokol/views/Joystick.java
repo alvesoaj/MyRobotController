@@ -66,13 +66,13 @@ public class Joystick extends View implements Runnable {
 		secondaryCircle.setStyle(Paint.Style.STROKE);
 
 		verticalLine = new Paint();
-		verticalLine.setStrokeWidth(2);
+		verticalLine.setStrokeWidth(5);
 		verticalLine.setColor(tyArr.getColor(
 				R.styleable.Joystick_secondaryCircleColor,
 				r.getColor(R.color.red)));
 
 		horizontalLine = new Paint();
-		horizontalLine.setStrokeWidth(5);
+		horizontalLine.setStrokeWidth(2);
 		horizontalLine.setColor(tyArr.getColor(
 				R.styleable.Joystick_secondaryCircleColor,
 				r.getColor(R.color.black)));
