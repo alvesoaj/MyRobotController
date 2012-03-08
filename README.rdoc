@@ -1,6 +1,0 @@
-* My Robot Controller - Android
-
-[http://i.creativecommons.org/l/by-sa/3.0/88x31.png]
-O trabalho MyRobotController de My Android Robot Controller foi licenciado com uma Licença Creative Commons - Atribuição - CompartilhaIgual 3.0 Não Adaptada.
-Com base no trabalho disponível em github.com.
-Podem estar disponíveis autorizações adicionais ao âmbito desta licença em https://github.com/zerokol.
