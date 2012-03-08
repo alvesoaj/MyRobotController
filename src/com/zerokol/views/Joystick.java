@@ -67,7 +67,7 @@ public class Joystick extends View implements Runnable {
 		buttonRadius = tyArr.getInteger(R.styleable.Joystick_buttonRadius, 30);
 
 		frontText = new Paint();
-		frontText.setTextSize(25);
+		frontText.setTextSize((int)(getWidth() * 0.1));
 		frontText.setColor(tyArr.getColor(
 				R.styleable.Joystick_secondaryCircleColor,
 				r.getColor(R.color.black)));
