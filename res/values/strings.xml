@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">My Robot Controller</string>
+    <string name="logo">Logo</string>
     <string name="angle_lab">Angle:</string>
     <string name="power_lab">Power:</string>
     <string name="direction_lab">Direc:</string>
@@ -15,5 +16,10 @@
     <string name="left_lab">Left</string>
     <string name="left_front_lab">Left front</string>
     <string name="center_lab">Center</string>
+    <string name="select_device_lab">Select device</string>
+    <string name="scan_devices_lab">Scan devices</string>
+    <string name="turn_bluetooth_lab">Turn On/Off Bluetooth</string>
+    <string name="bluetooth_off_lab">Bluetooth is OFF</string>
+    <string name="bluetooth_on_lab">Bluetooth is ON at</string>
 
 </resources>

@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.zerokol.myrobotcontroller"
+<manifest package="com.zerokol.myrobotcontroller"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-sdk android:minSdkVersion="7" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:icon="@drawable/robot_icon"
         android:label="@string/app_name" >
         <activity
-            android:label="@string/app_name"
             android:name="MyRobotControllerActivity"
+            android:label="@string/app_name"
             android:screenOrientation="landscape" >
-            <intent-filter >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="BluetoothManageActivity"></activity>
     </application>
 
 </manifest>
