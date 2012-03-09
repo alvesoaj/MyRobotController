@@ -1,4 +1,4 @@
-package com.zerokol;
+package com.zerokol.myrobotcontroller;
 
 import com.zerokol.views.JoystickView;
 import com.zerokol.views.JoystickView.OnJoystickMoveListener;
