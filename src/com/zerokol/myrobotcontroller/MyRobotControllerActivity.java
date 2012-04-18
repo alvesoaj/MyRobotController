@@ -77,8 +77,8 @@ public class MyRobotControllerActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MANAGE_BLUETOOTH, 0,
-				myResources.getText(R.string.turn_bluetooth_lab)).setIcon(
-				R.drawable.bluetooth);
+				myResources.getText(R.string.settings_lab)).setIcon(
+				R.drawable.settings_icon);
 		return true;
 	}
 

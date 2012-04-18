@@ -57,6 +57,7 @@ public class BluetoothManageActivity extends Activity {
 			String name = bluetooth.getName();
 			toastText = ((String) myResources
 					.getText(R.string.bluetooth_on_lab))
+					+ " "
 					+ name
 					+ " : "
 					+ address;

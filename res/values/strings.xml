@@ -8,18 +8,20 @@
     <string name="direction_lab">Direc:</string>
     <string name="none"></string>
     <string name="front_lab">Front</string>
-    <string name="front_right_lab">Front right</string>
+    <string name="front_right_lab">Front-Right</string>
     <string name="right_lab">Right</string>
-    <string name="right_bottom_lab">Right bottom</string>
+    <string name="right_bottom_lab">Right-Bottom</string>
     <string name="bottom_lab">Bottom</string>
-    <string name="bottom_left_lab">Bottom left</string>
+    <string name="bottom_left_lab">Left-Bottom</string>
     <string name="left_lab">Left</string>
-    <string name="left_front_lab">Left front</string>
+    <string name="left_front_lab">Front-Left</string>
     <string name="center_lab">Center</string>
     <string name="select_device_lab">Select device</string>
     <string name="scan_devices_lab">Scan devices</string>
+    <string name="settings_lab">Settings</string>
     <string name="turn_bluetooth_lab">Turn On/Off Bluetooth</string>
     <string name="bluetooth_off_lab">Bluetooth is OFF</string>
     <string name="bluetooth_on_lab">Bluetooth is ON at</string>
+    <string name="rights_lab">http://zerokol.com.br</string>
 
 </resources>
