@@ -8,70 +8,86 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TableLayout
-        android:id="@+id/tableLayout1"
+    <LinearLayout
+        android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
 
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
+        <TableLayout
+            android:id="@+id/tableLayout1"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
-            <TextView
-                android:id="@+id/angletextViewLab"
+            <TableRow
+                android:id="@+id/tableRow1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/angle_lab"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:layout_height="wrap_content" >
 
-            <TextView
-                android:id="@+id/angleTextView"
+                <TextView
+                    android:id="@+id/angletextViewLab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/angle_lab"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/angleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/none"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow2"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/none"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </TableRow>
+                android:layout_height="wrap_content" >
 
-        <TableRow
-            android:id="@+id/tableRow2"
+                <TextView
+                    android:id="@+id/powerTextViewLab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/power_lab"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/powerTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/none"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRow3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+id/directionTextViewLab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/direction_lab"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@+id/directionTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/none"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </TableRow>
+        </TableLayout>
+
+        <ImageButton
+            android:id="@+id/imageButton1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/logo"
+            android:src="@drawable/robot_icon" />
 
-            <TextView
-                android:id="@+id/powerTextViewLab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/power_lab"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <TextView
-                android:id="@+id/powerTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/none"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+id/directionTextViewLab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/direction_lab"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <TextView
-                android:id="@+id/directionTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/none"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </TableRow>
-    </TableLayout>
+    </LinearLayout>
 
 </LinearLayout>

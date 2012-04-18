@@ -3,20 +3,33 @@ package com.zerokol.myrobotcontroller;
 import com.zerokol.views.JoystickView;
 import com.zerokol.views.JoystickView.OnJoystickMoveListener;
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MyRobotControllerActivity extends Activity {
+	// Constants
+	private final int MANAGE_BLUETOOTH = 0;
+	// Variables
 	private TextView angleTextView;
 	private TextView powerTextView;
 	private TextView directionTextView;
 	private JoystickView joystick;
+	@SuppressWarnings("unused")
+	private BluetoothAdapter bluetooth;
+	private Resources myResources;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+
+		myResources = getResources();
 
 		angleTextView = (TextView) findViewById(R.id.angleTextView);
 		powerTextView = (TextView) findViewById(R.id.powerTextView);
@@ -27,7 +40,6 @@ public class MyRobotControllerActivity extends Activity {
 
 			@Override
 			public void onValueChanged(int angle, int power, int direction) {
-				// TODO Auto-generated method stub
 				angleTextView.setText(" " + String.valueOf(angle) + "°");
 				powerTextView.setText(" " + String.valueOf(power) + "%");
 				switch (direction) {
@@ -60,5 +72,24 @@ public class MyRobotControllerActivity extends Activity {
 				}
 			}
 		}, JoystickView.DEFAULT_LOOP_INTERVAL);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, MANAGE_BLUETOOTH, 0,
+				myResources.getText(R.string.turn_bluetooth_lab)).setIcon(
+				R.drawable.bluetooth);
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case MANAGE_BLUETOOTH:
+			Intent intent = new Intent(MyRobotControllerActivity.this,
+					BluetoothManageActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		return false;
 	}
 }
