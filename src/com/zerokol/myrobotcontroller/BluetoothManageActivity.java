@@ -149,6 +149,8 @@ public class BluetoothManageActivity extends Activity {
 		case SCAN_DEVICES:
 			if (!bluetooth.isDiscovering()) {
 				bluetooth.startDiscovery();
+			} else {
+				bluetooth.cancelDiscovery();
 			}
 			break;
 		}
