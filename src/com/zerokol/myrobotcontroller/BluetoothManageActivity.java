@@ -1,15 +1,21 @@
 package com.zerokol.myrobotcontroller;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.UUID;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,17 +31,19 @@ public class BluetoothManageActivity extends Activity {
 	private final int MANAGE_BLUETOOTH = 0;
 	private final int SCAN_DEVICES = 1;
 	// Variables
+	private String label = "MyRobotController";
 	private ListView bluetoothDevicesListView;
 	private Resources myResources;
 	private BluetoothAdapter bluetooth;
+	private BluetoothDevice device;
 	private String dStarted = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
 	private String dFinished = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
 	private ArrayList<String> bluetoothDeviceNames = new ArrayList<String>();
-	private ArrayAdapter<String> aa = new ArrayAdapter<String>(this,
-			android.R.layout.simple_list_item_1, bluetoothDeviceNames);
+	private ArrayAdapter<String> aa;
 	private ArrayList<BluetoothDevice> remoteDevices = new ArrayList<BluetoothDevice>();
-	@SuppressWarnings("unused")
 	private AdapterContextMenuInfo acmi = null;
+	private BluetoothSocket socket;
+	private UUID uuid = UUID.fromString("a60f35f0-b93a-11de-8a39-08002009c666");
 
 	private BroadcastReceiver discoveryResult = new BroadcastReceiver() {
 		@Override
@@ -44,14 +52,15 @@ public class BluetoothManageActivity extends Activity {
 			remoteDevice = intent
 					.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 			remoteDevices.add(remoteDevice);
-			String remoteDeviceName = intent
-					.getStringExtra(BluetoothDevice.EXTRA_NAME);
+			String remoteDeviceName = remoteDevice.getName();
 			if (remoteDeviceName == "") {
-				remoteDeviceName = remoteDevice.getName();
+				remoteDeviceName = remoteDevice.getAddress();
 			}
-			Toast.makeText(getApplicationContext(),
-					R.string.bluetooth_discovered_lab + remoteDeviceName,
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(
+					getApplicationContext(),
+					myResources.getText(R.string.bluetooth_discovered_lab)
+							+ " " + remoteDeviceName, Toast.LENGTH_SHORT)
+					.show();
 			bluetoothDeviceNames.add(0, remoteDeviceName);
 			aa.notifyDataSetChanged();
 		}
@@ -105,6 +114,9 @@ public class BluetoothManageActivity extends Activity {
 		registerReceiver(discoveryResult, new IntentFilter(
 				BluetoothDevice.ACTION_FOUND));
 
+		aa = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, bluetoothDeviceNames);
+
 		bluetoothDevicesListView.setAdapter(aa);
 
 		bluetoothDevicesListView
@@ -153,8 +165,25 @@ public class BluetoothManageActivity extends Activity {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-
-		// String name = bluetoothDeviceNames.get(acmi.position);
+		String name = bluetoothDeviceNames.get(acmi.position);
+		Iterator<BluetoothDevice> iterator = remoteDevices.iterator();
+		while (iterator.hasNext()) {
+			BluetoothDevice element = iterator.next();
+			if (name.equals(element.getName())
+					|| name.equals(element.getAddress())) {
+				device = element;
+				break;
+			}
+		}
+		if (device != null) {
+			try {
+				BluetoothSocket clientSocket = device
+						.createRfcommSocketToServiceRecord(uuid);
+				clientSocket.connect();
+			} catch (IOException e) {
+				Log.d(label, e.getMessage());
+			}
+		}
 
 		return true;
 	}
