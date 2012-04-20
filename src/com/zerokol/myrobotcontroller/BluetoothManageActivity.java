@@ -28,15 +28,51 @@ public class BluetoothManageActivity extends Activity {
 	private ListView bluetoothDevicesListView;
 	private Resources myResources;
 	private BluetoothAdapter bluetooth;
-	private BroadcastReceiver discoveryMonitor;
-	private BroadcastReceiver discoveryResult;
 	private String dStarted = BluetoothAdapter.ACTION_DISCOVERY_STARTED;
 	private String dFinished = BluetoothAdapter.ACTION_DISCOVERY_FINISHED;
-	private ArrayList<String> bluetoothDeviceNames;
-	private ArrayAdapter<String> aa;
-	private ArrayList<BluetoothDevice> foundDevices;
+	private ArrayList<String> bluetoothDeviceNames = new ArrayList<String>();
+	private ArrayAdapter<String> aa = new ArrayAdapter<String>(this,
+			android.R.layout.simple_list_item_1, bluetoothDeviceNames);
+	private ArrayList<BluetoothDevice> remoteDevices = new ArrayList<BluetoothDevice>();
 	@SuppressWarnings("unused")
 	private AdapterContextMenuInfo acmi = null;
+
+	private BroadcastReceiver discoveryResult = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			BluetoothDevice remoteDevice;
+			remoteDevice = intent
+					.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+			remoteDevices.add(remoteDevice);
+			String remoteDeviceName = intent
+					.getStringExtra(BluetoothDevice.EXTRA_NAME);
+			if (remoteDeviceName == "") {
+				remoteDeviceName = remoteDevice.getName();
+			}
+			Toast.makeText(getApplicationContext(),
+					R.string.bluetooth_discovered_lab + remoteDeviceName,
+					Toast.LENGTH_SHORT).show();
+			bluetoothDeviceNames.add(0, remoteDeviceName);
+			aa.notifyDataSetChanged();
+		}
+	};
+
+	private BroadcastReceiver discoveryMonitor = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (dStarted.equals(intent.getAction())) {
+				// Discovery has started.
+				Toast.makeText(getApplicationContext(),
+						R.string.bluetooth_dis_start_lab, Toast.LENGTH_SHORT)
+						.show();
+			} else if (dFinished.equals(intent.getAction())) {
+				// Discovery has completed.
+				Toast.makeText(getApplicationContext(),
+						R.string.bluetooth_dis_comp_lab, Toast.LENGTH_SHORT)
+						.show();
+			}
+		}
+	};
 
 	/** Called when the activity is first created. */
 	@Override
@@ -53,65 +89,21 @@ public class BluetoothManageActivity extends Activity {
 
 		String toastText;
 		if (bluetooth.isEnabled()) {
-			String address = bluetooth.getAddress();
-			String name = bluetooth.getName();
 			toastText = ((String) myResources
 					.getText(R.string.bluetooth_on_lab))
 					+ " "
-					+ name
-					+ " : "
-					+ address;
+					+ bluetooth.getName() + " : " + bluetooth.getAddress();
 		} else {
 			toastText = (String) myResources
 					.getText(R.string.bluetooth_off_lab);
 		}
 		Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
 
-		discoveryMonitor = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				if (dStarted.equals(intent.getAction())) {
-					// Discovery has started.
-					Toast.makeText(getApplicationContext(),
-							"Discovery Started . . . ", Toast.LENGTH_SHORT)
-							.show();
-				} else if (dFinished.equals(intent.getAction())) {
-					// Discovery has completed.
-					Toast.makeText(getApplicationContext(),
-							"Discovery Completed . . . ", Toast.LENGTH_SHORT)
-							.show();
-				}
-			}
-		};
-
 		registerReceiver(discoveryMonitor, new IntentFilter(dStarted));
 		registerReceiver(discoveryMonitor, new IntentFilter(dFinished));
 
-		discoveryResult = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				String remoteDeviceName = intent
-						.getStringExtra(BluetoothDevice.EXTRA_NAME);
-				BluetoothDevice remoteDevice;
-				remoteDevice = intent
-						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				Toast.makeText(getApplicationContext(),
-						"Discovered: " + remoteDeviceName, Toast.LENGTH_SHORT)
-						.show();
-				bluetoothDeviceNames.add(0, remoteDeviceName);
-				aa.notifyDataSetChanged();
-				if (bluetooth.getBondedDevices().contains(remoteDevice)) {
-					foundDevices.add(remoteDevice);
-				}
-			}
-		};
 		registerReceiver(discoveryResult, new IntentFilter(
 				BluetoothDevice.ACTION_FOUND));
-
-		bluetoothDeviceNames = new ArrayList<String>();
-
-		aa = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, bluetoothDeviceNames);
 
 		bluetoothDevicesListView.setAdapter(aa);
 
@@ -148,6 +140,8 @@ public class BluetoothManageActivity extends Activity {
 			return true;
 		case SCAN_DEVICES:
 			if (!bluetooth.isDiscovering()) {
+				// Limpando a linta de estações encontradas previamente
+				remoteDevices.clear();
 				bluetooth.startDiscovery();
 			} else {
 				bluetooth.cancelDiscovery();

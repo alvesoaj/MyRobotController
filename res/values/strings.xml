@@ -22,6 +22,9 @@
     <string name="turn_bluetooth_lab">Turn On/Off Bluetooth</string>
     <string name="bluetooth_off_lab">Bluetooth is OFF</string>
     <string name="bluetooth_on_lab">Bluetooth is ON at</string>
-    <string name="rights_lab">http://zerokol.com.br</string>
+    <string name="rights_lab">http://zerokol.com</string>
+    <string name="bluetooth_dis_start_lab">Bluetooth discovery Started</string>
+    <string name="bluetooth_dis_comp_lab">Bluetooth discovery Completed</string>
+    <string name="bluetooth_discovered_lab">Discovered</string>
 
 </resources>
