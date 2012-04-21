@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -43,7 +44,9 @@ public class BluetoothManageActivity extends Activity {
 	private ArrayList<BluetoothDevice> remoteDevices = new ArrayList<BluetoothDevice>();
 	private AdapterContextMenuInfo acmi = null;
 	private BluetoothSocket socket;
-	private UUID uuid = UUID.fromString("a60f35f0-b93a-11de-8a39-08002009c666");
+	// private UUID uuid =
+	// UUID.fromString("a60f35f0-b93a-11de-8a39-08002009c666");
+	private UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
 	private BroadcastReceiver discoveryResult = new BroadcastReceiver() {
 		@Override
@@ -51,18 +54,22 @@ public class BluetoothManageActivity extends Activity {
 			BluetoothDevice remoteDevice;
 			remoteDevice = intent
 					.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-			remoteDevices.add(remoteDevice);
-			String remoteDeviceName = remoteDevice.getName();
-			if (remoteDeviceName == "") {
-				remoteDeviceName = remoteDevice.getAddress();
+			if (!remoteDevices.contains(remoteDevice)) {
+				remoteDevices.add(remoteDevice);
+				String remoteDeviceName = remoteDevice.getName();
+				if (remoteDeviceName == "") {
+					remoteDeviceName = remoteDevice.getAddress();
+				}
+				Log.w(label, "Found: " + remoteDevice.getName() + " | "
+						+ remoteDevice.getAddress());
+				Toast.makeText(
+						getApplicationContext(),
+						myResources.getText(R.string.bluetooth_discovered_lab)
+								+ " " + remoteDeviceName, Toast.LENGTH_SHORT)
+						.show();
+				bluetoothDeviceNames.add(0, remoteDeviceName);
+				aa.notifyDataSetChanged();
 			}
-			Toast.makeText(
-					getApplicationContext(),
-					myResources.getText(R.string.bluetooth_discovered_lab)
-							+ " " + remoteDeviceName, Toast.LENGTH_SHORT)
-					.show();
-			bluetoothDeviceNames.add(0, remoteDeviceName);
-			aa.notifyDataSetChanged();
 		}
 	};
 
@@ -70,12 +77,10 @@ public class BluetoothManageActivity extends Activity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if (dStarted.equals(intent.getAction())) {
-				// Discovery has started.
 				Toast.makeText(getApplicationContext(),
 						R.string.bluetooth_dis_start_lab, Toast.LENGTH_SHORT)
 						.show();
 			} else if (dFinished.equals(intent.getAction())) {
-				// Discovery has completed.
 				Toast.makeText(getApplicationContext(),
 						R.string.bluetooth_dis_comp_lab, Toast.LENGTH_SHORT)
 						.show();
@@ -113,6 +118,8 @@ public class BluetoothManageActivity extends Activity {
 
 		registerReceiver(discoveryResult, new IntentFilter(
 				BluetoothDevice.ACTION_FOUND));
+
+		Log.w(label, String.valueOf(bluetoothDeviceNames.size()));
 
 		aa = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, bluetoothDeviceNames);
@@ -172,17 +179,31 @@ public class BluetoothManageActivity extends Activity {
 			if (name.equals(element.getName())
 					|| name.equals(element.getAddress())) {
 				device = element;
+				Log.w(label,
+						"Device: " + device.getName() + " | "
+								+ device.getAddress());
 				break;
 			}
 		}
+
 		if (device != null) {
-			try {
-				BluetoothSocket clientSocket = device
-						.createRfcommSocketToServiceRecord(uuid);
-				clientSocket.connect();
-			} catch (IOException e) {
-				Log.d(label, e.getMessage());
-			}
+			AsyncTask<Integer, Void, Void> connectTask = new AsyncTask<Integer, Void, Void>() {
+				@Override
+				protected Void doInBackground(Integer... params) {
+					try {
+						socket = device.createRfcommSocketToServiceRecord(uuid);
+						socket.connect();
+					} catch (IOException e) {
+						Log.d(label, e.getMessage());
+					}
+					return null;
+				}
+
+				@Override
+				protected void onPostExecute(Void result) {
+				}
+			};
+			connectTask.execute();
 		}
 
 		return true;
