@@ -1,6 +1,8 @@
 package com.zerokol.myrobotcontroller;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
@@ -193,6 +195,7 @@ public class BluetoothManageActivity extends Activity {
 					try {
 						socket = device.createRfcommSocketToServiceRecord(uuid);
 						socket.connect();
+						sendMessage("You rock guy!");
 					} catch (IOException e) {
 						Log.d(label, e.getMessage());
 					}
@@ -214,5 +217,39 @@ public class BluetoothManageActivity extends Activity {
 		unregisterReceiver(discoveryMonitor);
 		unregisterReceiver(discoveryResult);
 		super.onDestroy();
+	}
+
+	private void sendMessage(String message){
+		OutputStream outStream;
+		try {
+			outStream = socket.getOutputStream();
+			// Add a stop character.
+			byte[] byteArray = (message + " ").getBytes();
+			byteArray[byteArray.length - 1] = 0;
+			outStream.write(byteArray);
+		} catch (IOException e) { }
+	}
+
+	@SuppressWarnings("unused")
+	private String listenForMessage(){
+		String result = "";
+		int bufferSize = 1024;
+		byte[] buffer = new byte[bufferSize];
+		try {
+			InputStream instream = socket.getInputStream();
+			int bytesRead = -1;
+			while (true) {
+				bytesRead = instream.read(buffer);
+				if (bytesRead != -1) {
+					while ((bytesRead == bufferSize) && (buffer[bufferSize-1] != 0)){
+						result = result + new String(buffer, 0, bytesRead);
+						bytesRead = instream.read(buffer);
+					}
+					result = result + new String(buffer, 0, bytesRead - 1);
+					return result;
+				}
+			}
+		} catch (IOException e) {}
+		return result;
 	}
 }
