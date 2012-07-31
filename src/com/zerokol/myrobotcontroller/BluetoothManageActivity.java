@@ -1,22 +1,17 @@
 package com.zerokol.myrobotcontroller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.UUID;
-
+import java.util.Set;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -45,10 +40,7 @@ public class BluetoothManageActivity extends Activity {
 	private ArrayAdapter<String> aa;
 	private ArrayList<BluetoothDevice> remoteDevices = new ArrayList<BluetoothDevice>();
 	private AdapterContextMenuInfo acmi = null;
-	private BluetoothSocket socket;
-	// private UUID uuid =
-	// UUID.fromString("a60f35f0-b93a-11de-8a39-08002009c666");
-	private UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+	private Set<BluetoothDevice> pairedDevices;
 
 	private BroadcastReceiver discoveryResult = new BroadcastReceiver() {
 		@Override
@@ -58,18 +50,21 @@ public class BluetoothManageActivity extends Activity {
 					.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 			if (!remoteDevices.contains(remoteDevice)) {
 				remoteDevices.add(remoteDevice);
-				String remoteDeviceName = remoteDevice.getName();
-				if (remoteDeviceName == "") {
-					remoteDeviceName = remoteDevice.getAddress();
-				}
 				Log.w(label, "Found: " + remoteDevice.getName() + " | "
 						+ remoteDevice.getAddress());
+				String deviceBTName = remoteDevice.getName();
+				if (deviceBTName.compareTo("") == 0 || deviceBTName == null) {
+					deviceBTName = remoteDevice.getAddress();
+				}
+				String deviceBTMajorClass = getBTMajorDeviceClass(remoteDevice
+						.getBluetoothClass().getMajorDeviceClass());
 				Toast.makeText(
 						getApplicationContext(),
 						myResources.getText(R.string.bluetooth_discovered_lab)
-								+ " " + remoteDeviceName, Toast.LENGTH_SHORT)
+								+ " " + deviceBTName, Toast.LENGTH_SHORT)
 						.show();
-				bluetoothDeviceNames.add(0, remoteDeviceName);
+				bluetoothDeviceNames.add(0, deviceBTName + "\n"
+						+ deviceBTMajorClass);
 				aa.notifyDataSetChanged();
 			}
 		}
@@ -121,10 +116,20 @@ public class BluetoothManageActivity extends Activity {
 		registerReceiver(discoveryResult, new IntentFilter(
 				BluetoothDevice.ACTION_FOUND));
 
-		Log.w(label, String.valueOf(bluetoothDeviceNames.size()));
-
 		aa = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, bluetoothDeviceNames);
+
+		pairedDevices = bluetooth.getBondedDevices();
+
+		if (pairedDevices.size() > 0) {
+			for (BluetoothDevice device : pairedDevices) {
+				String deviceBTName = device.getName();
+				String deviceBTMajorClass = getBTMajorDeviceClass(device
+						.getBluetoothClass().getMajorDeviceClass());
+				aa.add(deviceBTName + "\n" + deviceBTMajorClass);
+				remoteDevices.add(device);
+			}
+		}
 
 		bluetoothDevicesListView.setAdapter(aa);
 
@@ -137,6 +142,35 @@ public class BluetoothManageActivity extends Activity {
 						menu.add(0, 0, 0, R.string.select_device_lab);
 					}
 				});
+	}
+
+	private String getBTMajorDeviceClass(int major) {
+		switch (major) {
+		case BluetoothClass.Device.Major.AUDIO_VIDEO:
+			return "AUDIO_VIDEO";
+		case BluetoothClass.Device.Major.COMPUTER:
+			return "COMPUTER";
+		case BluetoothClass.Device.Major.HEALTH:
+			return "HEALTH";
+		case BluetoothClass.Device.Major.IMAGING:
+			return "IMAGING";
+		case BluetoothClass.Device.Major.MISC:
+			return "MISC";
+		case BluetoothClass.Device.Major.NETWORKING:
+			return "NETWORKING";
+		case BluetoothClass.Device.Major.PERIPHERAL:
+			return "PERIPHERAL";
+		case BluetoothClass.Device.Major.PHONE:
+			return "PHONE";
+		case BluetoothClass.Device.Major.TOY:
+			return "TOY";
+		case BluetoothClass.Device.Major.UNCATEGORIZED:
+			return "UNCATEGORIZED";
+		case BluetoothClass.Device.Major.WEARABLE:
+			return "AUDIO_VIDEO";
+		default:
+			return "unknown!";
+		}
 	}
 
 	@Override
@@ -174,12 +208,12 @@ public class BluetoothManageActivity extends Activity {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		String name = bluetoothDeviceNames.get(acmi.position);
+		String a[] = bluetoothDeviceNames.get(acmi.position).split("\n");
 		Iterator<BluetoothDevice> iterator = remoteDevices.iterator();
 		while (iterator.hasNext()) {
 			BluetoothDevice element = iterator.next();
-			if (name.equals(element.getName())
-					|| name.equals(element.getAddress())) {
+			if (a[0].equals(element.getName())
+					|| a[0].equals(element.getAddress())) {
 				device = element;
 				Log.w(label,
 						"Device: " + device.getName() + " | "
@@ -189,24 +223,10 @@ public class BluetoothManageActivity extends Activity {
 		}
 
 		if (device != null) {
-			AsyncTask<Integer, Void, Void> connectTask = new AsyncTask<Integer, Void, Void>() {
-				@Override
-				protected Void doInBackground(Integer... params) {
-					try {
-						socket = device.createRfcommSocketToServiceRecord(uuid);
-						socket.connect();
-						sendMessage("You rock guy!");
-					} catch (IOException e) {
-						Log.d(label, e.getMessage());
-					}
-					return null;
-				}
-
-				@Override
-				protected void onPostExecute(Void result) {
-				}
-			};
-			connectTask.execute();
+			Intent intent = new Intent(BluetoothManageActivity.this,
+					MyRobotControllerActivity.class);
+			intent.putExtra("address", device.getAddress());
+			startActivity(intent);
 		}
 
 		return true;
@@ -217,39 +237,5 @@ public class BluetoothManageActivity extends Activity {
 		unregisterReceiver(discoveryMonitor);
 		unregisterReceiver(discoveryResult);
 		super.onDestroy();
-	}
-
-	private void sendMessage(String message){
-		OutputStream outStream;
-		try {
-			outStream = socket.getOutputStream();
-			// Add a stop character.
-			byte[] byteArray = (message + " ").getBytes();
-			byteArray[byteArray.length - 1] = 0;
-			outStream.write(byteArray);
-		} catch (IOException e) { }
-	}
-
-	@SuppressWarnings("unused")
-	private String listenForMessage(){
-		String result = "";
-		int bufferSize = 1024;
-		byte[] buffer = new byte[bufferSize];
-		try {
-			InputStream instream = socket.getInputStream();
-			int bytesRead = -1;
-			while (true) {
-				bytesRead = instream.read(buffer);
-				if (bytesRead != -1) {
-					while ((bytesRead == bufferSize) && (buffer[bufferSize-1] != 0)){
-						result = result + new String(buffer, 0, bytesRead);
-						bytesRead = instream.read(buffer);
-					}
-					result = result + new String(buffer, 0, bytesRead - 1);
-					return result;
-				}
-			}
-		} catch (IOException e) {}
-		return result;
 	}
 }
