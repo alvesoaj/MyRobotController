@@ -26,5 +26,6 @@
     <string name="bluetooth_dis_start_lab">Bluetooth discovery Started</string>
     <string name="bluetooth_dis_comp_lab">Bluetooth discovery Completed</string>
     <string name="bluetooth_discovered_lab">Discovered</string>
+    <string name="device_indicator_image_description">Describe the device status connection.</string>
 
 </resources>

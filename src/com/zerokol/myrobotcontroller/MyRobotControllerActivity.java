@@ -5,8 +5,8 @@ import java.io.OutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import com.zerokol.views.JoystickView;
-import com.zerokol.views.JoystickView.OnJoystickMoveListener;
+import com.zerokol.views.joystickview.JoystickView;
+import com.zerokol.views.joystickview.JoystickView.OnJoystickMoveListener;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -42,7 +42,7 @@ public class MyRobotControllerActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.my_robot_controller);
 
 		myResources = getResources();
 
@@ -88,7 +88,7 @@ public class MyRobotControllerActivity extends Activity {
 					directionTextView.setText(R.string.center_lab);
 				}
 			}
-		}, JoystickView.DEFAULT_LOOP_INTERVAL);
+		});
 
 		bluetooth = BluetoothAdapter.getDefaultAdapter();
 
