@@ -5,8 +5,8 @@ import java.io.OutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
-import com.zerokol.views.joystickview.JoystickView;
-import com.zerokol.views.joystickview.JoystickView.OnJoystickMoveListener;
+import com.zerokol.views.JoystickView;
+import com.zerokol.views.JoystickView.OnJoystickMoveListener;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -57,7 +57,7 @@ public class MyRobotControllerActivity extends Activity {
 			public void onValueChanged(int angle, int power, int direction) {
 				angleTemp = angle;
 				powerTemp = power;
-				angleTextView.setText(" " + String.valueOf(angle) + "°");
+				angleTextView.setText(" " + String.valueOf(angle) + "");
 				powerTextView.setText(" " + String.valueOf(power) + "%");
 				switch (direction) {
 				case JoystickView.FRONT:
@@ -88,7 +88,7 @@ public class MyRobotControllerActivity extends Activity {
 					directionTextView.setText(R.string.center_lab);
 				}
 			}
-		});
+		}, 100);
 
 		bluetooth = BluetoothAdapter.getDefaultAdapter();
 
